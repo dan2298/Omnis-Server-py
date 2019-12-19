@@ -2,6 +2,9 @@ from flask import Flask, request, send_file, jsonify, Response
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import json
 import subprocess
 import os
@@ -57,15 +60,30 @@ def soundcloudInfo():
     chrome_options.add_argument('--no-sandbox')
     driver = webdriver.Chrome(executable_path=os.environ.get(
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    # driver = webdriver.Chrome('./chromedriver') //offline use
     driver.get(url)
-    html = driver.page_source
+    try:
+        element = WebDriverWait(driver, 15).until(
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, "searchList__item"))
+        )
+        html = driver.page_source
+    finally:
+        driver.quit()
+
     soup = BeautifulSoup(html, 'html.parser')
-    items = soup.findAll("div", {"class": "sound__body"})
-    driver.quit()
-    newitems = items[0:5]
-    results = []
-    for x in newitems:
-        results.append(str(x))
+    pics = soup.findAll("a", {"class": "sound__coverArt"})
+    content = soup.findAll(
+        "div", {"class": "soundTitle__usernameTitleContainer"})
+    picsArr = []
+    contentArr = []
+    print(len(pics))
+    print(len(content))
+    for x in range(5):
+        contentArr.append(str(content[x]))
+        picsArr.append(str(pics[x]))
+
+    results = {'content': contentArr, 'pics': picsArr}
     return Response(json.dumps(results),  mimetype='application/json')
 
 
