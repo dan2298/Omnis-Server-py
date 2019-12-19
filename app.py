@@ -1,8 +1,8 @@
 from flask import Flask, request, send_file, jsonify, Response
 from flask_cors import CORS
-import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
+import json
 import subprocess
 import os
 path = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +42,11 @@ def spotify(type, url):
 def soundcloudInfo():
     term = request.args.get('q')
     url = 'https://soundcloud.com/search?q=' + term
-    print(url)
+    chrome_options = webdriver.ChromeOptions()
+    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--disable-dev-shm-usage')
+    # chrome_options.add_argument('--no-sandbox')
     driver = webdriver.Chrome(path + '/chromedriver')
     driver.get(url)
     print('got url =========')
