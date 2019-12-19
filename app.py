@@ -42,12 +42,16 @@ def spotify(type, url):
 def soundcloudInfo():
     term = request.args.get('q')
     url = 'https://soundcloud.com/search?q=' + term
+    print(url)
     driver = webdriver.Chrome(path + '/chromedriver')
     driver.get(url)
+    print('got url =========')
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
+    print('parsed html =========')
     items = soup.findAll("div", {"class": "sound__body"})
     results = []
+    print('found =========')
     for x in items:
         results.append(str(x))
     return Response(json.dumps(results),  mimetype='application/json')
