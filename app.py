@@ -61,6 +61,7 @@ def soundcloudInfo():
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.findAll("div", {"class": "sound__body"})
+    driver.quit()
     newitems = items[0:5]
     results = []
     for x in newitems:
