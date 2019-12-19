@@ -38,35 +38,34 @@ def spotify(type, url):
     return send_file(filePath)
 
 
-@app.route('/soundcloud/info')
-def soundcloudInfo():
-    term = request.args.get('q')
-    url = 'https://soundcloud.com/search?q=' + term
-    chrome_options = webdriver.ChromeOptions()
-    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    # chrome_options.add_argument('--headless')
-    # chrome_options.add_argument('--disable-dev-shm-usage')
-    # chrome_options.add_argument('--no-sandbox')
-    driver = webdriver.Chrome(path + '/chromedriver')
-    driver.get(url)
-    print('got url =========')
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-    print('parsed html =========')
-    items = soup.findAll("div", {"class": "sound__body"})
-    results = []
-    print('found =========')
-    for x in items:
-        results.append(str(x))
-    return Response(json.dumps(results),  mimetype='application/json')
-
-
 @app.route('/soundcloud')
 def soundcloud():
     print('sc downloading')
     subprocess.call(
         ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', 'https://soundcloud.com/jahkoy/letitbe'], shell=False)
     return 'hi'
+
+
+@app.route('/soundcloud/info')
+def soundcloudInfo():
+    term = request.args.get('q')
+    url = 'https://soundcloud.com/search?q=' + term
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--no-sandbox')
+    driver = webdriver.Chrome(executable_path=os.environ.get(
+        "CHROMEDRIVER PATH"), chrome_options=chrome_options)
+    driver.get(url)
+    print('got url =========')
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    items = soup.findAll("div", {"class": "sound__body"})
+    results = []
+    for x in items:
+        results.append(str(x))
+    return Response(json.dumps(results),  mimetype='application/json')
 
 
 if __name__ == '__main__':
