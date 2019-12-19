@@ -48,6 +48,7 @@ def soundcloud():
 
 @app.route('/soundcloud/info')
 def soundcloudInfo():
+    # https://github.com/heroku/heroku-buildpack-google-chrome
     term = request.args.get('q')
     url = 'https://soundcloud.com/search?q=' + term
     chrome_options = webdriver.ChromeOptions()
@@ -56,7 +57,7 @@ def soundcloudInfo():
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--no-sandbox')
     driver = webdriver.Chrome(executable_path=os.environ.get(
-        "CHROMEDRIVER PATH"), chrome_options=chrome_options)
+        "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     driver.get(url)
     print('got url =========')
     html = driver.page_source
