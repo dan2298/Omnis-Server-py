@@ -48,7 +48,6 @@ def soundcloud():
 
 @app.route('/soundcloud/info')
 def soundcloudInfo():
-    # https://github.com/heroku/heroku-buildpack-google-chrome
     term = request.args.get('q')
     url = 'https://soundcloud.com/search?q=' + term
     chrome_options = webdriver.ChromeOptions()
@@ -59,12 +58,12 @@ def soundcloudInfo():
     driver = webdriver.Chrome(executable_path=os.environ.get(
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     driver.get(url)
-    print('got url =========')
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.findAll("div", {"class": "sound__body"})
+    newitems = items[0:5]
     results = []
-    for x in items:
+    for x in newitems:
         results.append(str(x))
     return Response(json.dumps(results),  mimetype='application/json')
 
