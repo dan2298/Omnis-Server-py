@@ -77,7 +77,7 @@ def soundcloudInfo():
         "div", {"class": "soundTitle__usernameTitleContainer"})
     picsArr = []
     contentArr = []
-    for x in range(5):
+    for x in range(3):
         contentArr.append(str(content[x]))
         picsArr.append(str(pics[x]))
 
