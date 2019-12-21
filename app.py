@@ -41,18 +41,21 @@ def spotify(type, url):
     return send_file(filePath)
 
 
-@app.route('/soundcloud')
-def soundcloud():
+@app.route('/soundcloud/<string:artist>/<string:song>')
+def soundcloud(artist, song):
     print('sc downloading')
+    fileName = request.args.get('name') + '.mp3'
+    filePath = os.path.join(path, 'songs', fileName)
+    url = 'https://soundcloud.com/' + artist + '/' + song
     subprocess.call(
-        ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', 'https://soundcloud.com/jahkoy/letitbe'], shell=False)
-    return 'hi'
+        ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', url], shell=False)
+    return send_file(filePath)
 
 
 @app.route('/soundcloud/info')
 def soundcloudInfo():
     term = request.args.get('q')
-    url = 'https://soundcloud.com/search?q=' + term
+    url = 'https://soundcloud.com/search/sounds?q=' + term
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument('--headless')
