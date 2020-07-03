@@ -18,7 +18,7 @@ CORS(app)
 
 @app.route('/')
 def hello():
-    return "Hi World!"
+    return "Hello World!"
 
 
 @app.route('/www.youtube.com/<string:videoId>')
@@ -38,7 +38,7 @@ def spotify(type, url):
     fileName = request.args.get('isrc') + '.mp3'
     filePath = os.path.join(path, 'songs', fileName)
     subprocess.call(['spotdl', '-s open.spotify.com/' +
-                     type + '/' + url, '-f' + songPath, '-ff', '{isrc}'], shell=False)
+                     type + '/' + url, '-f' + songPath + '/' + fileName], shell=False)
     return send_file(filePath)
 
 
