@@ -66,10 +66,11 @@ def soundcloudInfo():
         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     # driver = webdriver.Chrome('./chromedriver')  # offline use
     driver.get(url)
+    xpath = "//*[@class='sound__coverArt']//span[contains(@style, 'background-image')]"
     try:
-        element = WebDriverWait(driver, 15).until(
-            EC.visibility_of_element_located(
-                (By.CLASS_NAME, "sound__coverArt"))
+        wait = WebDriverWait(driver, 10)
+        element = wait.until(
+            EC.visibility_of_element_located((By.XPATH, xpath))
         )
         html = driver.page_source
     finally:
@@ -77,8 +78,7 @@ def soundcloudInfo():
 
     soup = BeautifulSoup(html, 'html.parser')
     pics = soup.findAll("a", {"class": "sound__coverArt"})
-    content = soup.findAll(
-        "div", {"class": "soundTitle__usernameTitleContainer"})
+    content = soup.findAll("div", {"class": "soundTitle__usernameTitleContainer"})
     picsArr = []
     contentArr = []
     length = len(content)
@@ -92,7 +92,6 @@ def soundcloudInfo():
 
     results = {'content': contentArr, 'pics': picsArr}
     return Response(json.dumps(results),  mimetype='application/json')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
