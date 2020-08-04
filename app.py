@@ -28,7 +28,7 @@ def youtube(videoId):
     filePath = os.path.join(path, 'songs', fileName)
     url = 'https://www.youtube.com/watch?v=' + videoId
     subprocess.call(
-        ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(id)s.%(ext)s', url], shell=False)
+        ['youtube-dl', '--force-ipv4', '--no-check-certificate', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(id)s.%(ext)s', url], shell=False)
     return send_file(filePath)
 
 
@@ -49,7 +49,7 @@ def soundcloud(artist, song):
     filePath = os.path.join(path, 'songs', fileName)
     url = 'https://soundcloud.com/' + artist + '/' + song
     subprocess.call(
-        ['youtube-dl', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', url], shell=False)
+        ['youtube-dl', '--force-ipv4' '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', url], shell=False)
     return send_file(filePath)
 
 
