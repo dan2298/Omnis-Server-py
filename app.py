@@ -24,7 +24,7 @@ def hello():
 @app.route('/www.youtube.com/<string:videoId>')
 def youtube(videoId):
     print('yt downloading')
-    fileName = videoId + '.mp3'
+    fileName = videoId + 'yt.mp3'
     filePath = os.path.join(path, 'songs', fileName)
     url = 'https://www.youtube.com/watch?v=' + videoId
     subprocess.call(
@@ -36,7 +36,7 @@ def youtube(videoId):
 @app.route('/spotify/open.spotify.com/<string:type>/<string:url>')
 def spotify(type, url):
     print('spt downloading')
-    fileName = request.args.get('isrc') + '.mp3'
+    fileName = request.args.get('isrc') + 'spt.mp3'
     filePath = os.path.join(path, 'songs', fileName)
     subprocess.call(['spotdl', '-s open.spotify.com/' +
                      type + '/' + url, '-f' + songPath + '/' + fileName], shell=False)
@@ -46,7 +46,7 @@ def spotify(type, url):
 @app.route('/soundcloud/<string:artist>/<string:song>')
 def soundcloud(artist, song):
     print('sc downloading')
-    fileName = request.args.get('name') + '.mp3'
+    fileName = request.args.get('name') + 'sc.mp3'
     filePath = os.path.join(path, 'songs', fileName)
     url = 'https://soundcloud.com/' + artist + '/' + song
     subprocess.call(
