@@ -16,7 +16,7 @@ gunicorn==20.0.4
 humanfriendly==8.2
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 logzero==1.5.0
 lyricwikia==0.1.11
 MarkupSafe==1.1.1
