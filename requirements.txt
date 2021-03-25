@@ -26,7 +26,7 @@ pathlib==1.0.1
 pycodestyle==2.5.0
 pytube3==9.6.4
 pytz==2019.3
-PyYAML==5.2
+PyYAML==5.4
 requests==2.22.0
 scdl==1.6.12
 selenium==3.141.0
