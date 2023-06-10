@@ -28,8 +28,8 @@ def youtube(videoId):
     filePath = os.path.join(path, 'songs', fileName)
     url = 'https://www.youtube.com/watch?v=' + videoId
     subprocess.call(
-        ['youtube-dl', '--user-agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', '--no-check-certificate', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(id)s.%(ext)s', url], shell=False)
-
+        ['yt-dlp', '-o' + songPath + '/%(id)s.%(ext)s', '-x', '--audio-format', 'mp3', url]
+    )
     return send_file(filePath)
 
 
@@ -37,62 +37,61 @@ def youtube(videoId):
 def spotify(type, url):
     print('spt downloading')
     fileName = request.args.get('isrc') + '.mp3'
-    filePath = os.path.join(path, 'songs', fileName)
-    subprocess.call(['spotdl', '-s open.spotify.com/' +
-                     type + '/' + url, '-f' + songPath + '/' + fileName], shell=False)
-    return send_file(filePath)
+    filePath = os.path.join(path, 'songs/')
+    subprocess.call(['spotdl', '--output', filePath + '{isrc}', 'https://open.spotify.com/%s/%s' % (type, url)])
+    return send_file(filePath + fileName)
 
 
-@app.route('/soundcloud/<string:artist>/<string:song>')
-def soundcloud(artist, song):
-    print('sc downloading')
-    fileName = request.args.get('name') + '.mp3'
-    filePath = os.path.join(path, 'songs', fileName)
-    url = 'https://soundcloud.com/' + artist + '/' + song
-    subprocess.call(
-        ['youtube-dl', '--user-agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', '--no-check-certificate', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', url], shell=False)
-    return send_file(filePath)
+# @app.route('/soundcloud/<string:artist>/<string:song>')
+# def soundcloud(artist, song):
+#     print('sc downloading')
+#     fileName = request.args.get('name') + '.mp3'
+#     filePath = os.path.join(path, 'songs', fileName)
+#     url = 'https://soundcloud.com/' + artist + '/' + song
+#     subprocess.call(
+#         ['youtube-dl', '--user-agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', '--no-check-certificate', '--extract-audio', '--audio-format', 'mp3', '-o' + songPath + '/%(title)s.%(ext)s', url], shell=False)
+#     return send_file(filePath)
 
 
-@app.route('/soundcloud/info')
-def soundcloudInfo():
-    term = str(urllib.parse.quote(request.args.get('q')))
-    url = 'https://soundcloud.com/search/sounds?q=' + term
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--no-sandbox')
-    driver = webdriver.Chrome(executable_path=os.environ.get(
-        "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    # driver = webdriver.Chrome('./chromedriver')  # offline use
-    driver.get(url)
-    xpath = "//*[@class='sound__coverArt']//span[contains(@style, 'background-image')]"
-    try:
-        wait = WebDriverWait(driver, 10)
-        element = wait.until(
-            EC.visibility_of_element_located((By.XPATH, xpath))
-        )
-        html = driver.page_source
-    finally:
-        driver.quit()
+# @app.route('/soundcloud/info')
+# def soundcloudInfo():
+#     term = str(urllib.parse.quote(request.args.get('q')))
+#     url = 'https://soundcloud.com/search/sounds?q=' + term
+#     chrome_options = webdriver.ChromeOptions()
+#     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+#     chrome_options.add_argument('--headless')
+#     chrome_options.add_argument('--disable-gpu')
+#     chrome_options.add_argument('--no-sandbox')
+#     driver = webdriver.Chrome(executable_path=os.environ.get(
+#         "CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+#     # driver = webdriver.Chrome('./chromedriver')  # offline use
+#     driver.get(url)
+#     xpath = "//*[@class='sound__coverArt']//span[contains(@style, 'background-image')]"
+#     try:
+#         wait = WebDriverWait(driver, 10)
+#         element = wait.until(
+#             EC.visibility_of_element_located((By.XPATH, xpath))
+#         )
+#         html = driver.page_source
+#     finally:
+#         driver.quit()
 
-    soup = BeautifulSoup(html, 'html.parser')
-    pics = soup.findAll("a", {"class": "sound__coverArt"})
-    content = soup.findAll("div", {"class": "soundTitle__usernameTitleContainer"})
-    picsArr = []
-    contentArr = []
-    length = len(content)
+#     soup = BeautifulSoup(html, 'html.parser')
+#     pics = soup.findAll("a", {"class": "sound__coverArt"})
+#     content = soup.findAll("div", {"class": "soundTitle__usernameTitleContainer"})
+#     picsArr = []
+#     contentArr = []
+#     length = len(content)
 
-    if length == 0:
-        return {'content': [], 'pics': []}
+#     if length == 0:
+#         return {'content': [], 'pics': []}
 
-    for x in range(length):
-        contentArr.append(str(content[x]))
-        picsArr.append(str(pics[x]))
+#     for x in range(length):
+#         contentArr.append(str(content[x]))
+#         picsArr.append(str(pics[x]))
 
-    results = {'content': contentArr, 'pics': picsArr}
-    return Response(json.dumps(results),  mimetype='application/json')
+#     results = {'content': contentArr, 'pics': picsArr}
+#     return Response(json.dumps(results),  mimetype='application/json')
 
 if __name__ == '__main__':
     app.run(debug=True)
